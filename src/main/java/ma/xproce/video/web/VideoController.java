@@ -45,8 +45,8 @@ public class VideoController {
             return "redirect:/login";
         }
     }
-    @GetMapping("/index")
-    public String index(Model model, HttpServletRequest request) {
+    @GetMapping("/my-videos")
+    public String videoIndex(Model model, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("username") != null) {
             String username = (String) session.getAttribute("username");
@@ -65,6 +65,21 @@ public class VideoController {
                 System.out.println("not logged in mate, go back to login");
                 return "redirect:/login";
             }
+
+        return "my-videos";
+    }
+    @GetMapping("/index")
+    public String index(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("username") != null) {
+                List<Video> videos = videoManager.getAllVideos();
+                model.addAttribute("videos", videos);
+
+        }
+        else {
+            System.out.println("not logged in mate, go back to login");
+            return "redirect:/login";
+        }
 
         return "index";
     }
@@ -96,7 +111,7 @@ public class VideoController {
                 Creator creator = optionalCreator.get();
                 Video video = new Video();
                 video.setName(name);
-                video.setUrl(file.getOriginalFilename());
+                video.setUrl("/"+file.getOriginalFilename());
                 video.setCreator(creator);
                 videoManager.addVideo(video);
             }
