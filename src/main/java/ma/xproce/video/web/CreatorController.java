@@ -11,16 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ma.xproce.video.dao.entity.Video;
-import ma.xproce.video.service.VideoManager;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.net.ssl.HandshakeCompletedEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.UUID;
+
 @Controller
 public class CreatorController {
     @Value("${upload-dir}")
@@ -30,7 +27,7 @@ public class CreatorController {
 
 
     @GetMapping("/login")
-        public String login(Model model) {return "login";}
+        public String login() {return "login";}
 
     @PostMapping("/login")
         public String login(Model model, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, HttpServletRequest request) {
@@ -44,27 +41,29 @@ public class CreatorController {
             // Handle failed login attempt
             String message = "chkon nta ??";
             model.addAttribute("message", message);
-            return "redirect:/login?error";
+            return "/login";
         }
     }
     @GetMapping("/sign")
-        public String sign(Model model) {
+        public String sign() {
             return "signup";
             }
     @PostMapping("/sign")
-        public String sign(Model model, @RequestParam(name = "mail") String mail, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, @RequestParam(name = "profile")MultipartFile profile) throws IOException {
+        public String sign(@RequestParam(name = "mail") String mail, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, @RequestParam(name = "profile") MultipartFile  profile) throws IOException {
         if(profile.isEmpty()) {
             System.out.println("wtf is this bogus");
             return "rediret:post?error";
         }
         byte[] bytes = profile.getBytes();
-        Path path = Paths.get(uploadDir + profile.getOriginalFilename());
-        Files.write(path, bytes);
-        String filePath = path.toString();
+        String originalFilename = profile.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String uniqueFilename = UUID.randomUUID().toString() + extension;
+        Path uploadPath = Paths.get(uploadDir, uniqueFilename);
+        Files.write(uploadPath, bytes);
         Creator creator = new Creator();
         creator.setUsername(username);
         creator.setPassword(password);
-        creator.setProfile(filePath);
+        creator.setProfile("/"+uniqueFilename);
         creator.setMail(mail);
         creatorManager.addCreator(creator);
         return "redirect:/";

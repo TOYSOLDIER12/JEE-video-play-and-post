@@ -68,6 +68,7 @@ public class VideoApplication implements CommandLineRunner {
         creator.setUsername("ghir ana");
         creator.setPassword("1234");
         creator.setMail("mail");
+        creator.setProfile("/image.jpeg");
         creatorManager.addCreator(creator);
         video.setCreator(creator);
         videoManager.addVideo(video);

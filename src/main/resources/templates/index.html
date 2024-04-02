@@ -19,14 +19,17 @@
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative; /* Make container relative for absolute positioning */
         }
 
         .video {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .video h2 {
             margin-top: 0;
+            margin-bottom: 10px; /* Add margin-bottom to video title */
         }
 
         .video video {
@@ -34,14 +37,43 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
+        .profile {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .profile span {
+            font-weight: bold;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Videos</h1>
+    <h1>Your Index me Lord
+    <span th:text="${username}"></span>
+    </h1>
     <div class="videos">
         <div th:each="video : ${videos}" class="video">
-            <h2 th:text="${video.name}">Video Title</h2>
+            <div class="profile">
+                <img th:src="${video.creator.profile}" alt="Profile Picture">
+                <span th:text="${video.creator.username}"></span>
+            </div>
+            <h2 th:text="${video.name}" style="margin-bottom:40px; margin-left:150px;">Video Title</h2>
             <video controls loop autoplay>
                 <source th:src="${video.url}" type="video/mp4">
                 Your browser does not support the video tag.

@@ -15,7 +15,7 @@ public class CreatorService implements CreatorManager {
     @Override
     public Creator addCreator(Creator creator) {
         if(creator.getUsername().isEmpty() || creator.getMail().isEmpty()) {
-            System.out.println("no name noor mail wtf");
+            System.out.println("no name nor mail wtf");
             return null;
         }
         return creatorRepository.save(creator);

@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class VideoController {
@@ -69,9 +70,12 @@ public class VideoController {
         return "my-videos";
     }
     @GetMapping("/index")
-    public String index(Model model, HttpServletRequest request) {
+    public String index(Model model,Model model1, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("username") != null) {
+                Optional<Creator> optionalCreator = creatorManager.findByUsername((String) session.getAttribute("username"));
+                Creator creator = optionalCreator.get();
+                model1.addAttribute("username", creator.getUsername());
                 List<Video> videos = videoManager.getAllVideos();
                 model.addAttribute("videos", videos);
 
@@ -103,15 +107,17 @@ public class VideoController {
             Optional<Creator> optionalCreator = creatorManager.findByUsername(username);
 
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(uploadDir + file.getOriginalFilename());
-            Files.write(path, bytes);
-            String filePath = path.toString();
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String uniqueFilename = UUID.randomUUID().toString() + extension;
+            Path uploadPath = Paths.get(uploadDir, uniqueFilename);
+            Files.write(uploadPath, bytes);
 
             if (optionalCreator.isPresent()) {
                 Creator creator = optionalCreator.get();
                 Video video = new Video();
                 video.setName(name);
-                video.setUrl("/"+file.getOriginalFilename());
+                video.setUrl("/"+uniqueFilename);
                 video.setCreator(creator);
                 videoManager.addVideo(video);
             }
