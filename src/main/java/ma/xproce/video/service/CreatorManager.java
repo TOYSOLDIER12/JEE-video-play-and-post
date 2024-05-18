@@ -1,17 +1,19 @@
 package ma.xproce.video.service;
 
 import ma.xproce.video.dao.entity.Creator;
+import ma.xproce.video.service.dtos.CreatorDTO;
+import ma.xproce.video.service.dtos.CreatorDTOADD;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CreatorManager {
-    public Creator addCreator(Creator creator);
-    public Creator updateCreator(Creator creator);
-    public boolean deleteCeator(Creator creator);
-    public List<Creator> getAllCreators();
-    public Creator getById(long id);
+    public CreatorDTO addCreator(CreatorDTOADD creatorDTOADD);
+    public CreatorDTO updateCreator(CreatorDTOADD creatorDTOADD);
+    public boolean deleteCeator(long id);
+    public List<CreatorDTO> getAllCreators();
+    public CreatorDTO getById(long id);
 
     public boolean checkLogin(String username, String password);
-    public Optional<Creator> findByUsername(String username);
+    public CreatorDTO findByUsername(String username);
 }

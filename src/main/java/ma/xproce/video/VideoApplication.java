@@ -1,83 +1,101 @@
 package ma.xproce.video;
 
 import ma.xproce.video.dao.entity.Creator;
+
+import ma.xproce.video.dao.entity.Privilege;
+import ma.xproce.video.dao.entity.Role;
 import ma.xproce.video.dao.entity.Video;
-import ma.xproce.video.service.CreatorManager;
-import ma.xproce.video.service.VideoManager;
+import ma.xproce.video.dao.repository.PrivilegesRepository;
+import ma.xproce.video.dao.repository.RoleRepository;
+import ma.xproce.video.service.*;
+
+import ma.xproce.video.service.dtos.CreatorDTOADD;
+import ma.xproce.video.service.mapper.CreatorMapper;
+import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Date;
+
+
 
 @SpringBootApplication
 public class VideoApplication implements CommandLineRunner {
-   /* @Autowired
-    VideoRepository videoRepository;
-    @Autowired
-    CreatorRepository creatorRepository;
-    */
+
+
     @Autowired
     CreatorManager creatorManager;
     @Autowired
     VideoManager videoManager;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired
+    CreatorMapper creatorMapper;
+    @Autowired
+    VideoMapper videoMapper;
+    @Autowired
+    private CreatorService creatorService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private PrivilegesRepository privilegesRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(VideoApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        // repository test
-       /* Collection<Video> videos = new ArrayList<>();
-        Video video = new Video();
-        video.setName("last video");
-        video.setDescription("kykhla3");
-        video.setUrl("/home/toy/video.mp4");
-        video.setDatePublication(new Date(1999,12,01));
-        videos.add(video);
-        videoRepository.save(video);
-        Creator creator = new Creator();
-        creator.setVideos(videos);
-        creator.setName("ghir ana");
-        creator.setMail("mail");
-        creatorRepository.save(creator);
-        video.setCreator(creator);
-        videoRepository.save(video);
-*/
-        // servide test
-        Collection<Video> videos = new ArrayList<>();
-        Video video = new Video();
-        video.setName("last video");
-        video.setDescription("kykhla3");
-        video.setUrl("/home/toy/video.mp4");
-        video.setDatePublication(new Date(1999,12,01));
-        videos.add(video);
-        Video video2 = new Video();
-        video2.setName("real last video");
-        video2.setDescription("g3ma kykhla3");
-        video2.setUrl("../resources/static/video.mp4");
-        video2.setDatePublication(new Date(1998,12,01));
-        videos.add(video2);
-        videoManager.addVideo(video);
-        videoManager.addVideo(video2);
-        Creator creator = new Creator();
-        creator.setVideos(videos);
-        creator.setUsername("ghir ana");
+
+      /*  Creator creator = new Creator();
+        creator.setUsername("sidna");
         creator.setPassword("1234");
         creator.setMail("mail");
         creator.setProfile("/image.jpeg");
-        creatorManager.addCreator(creator);
-        video.setCreator(creator);
-        videoManager.addVideo(video);
+        Role role = new Role();
+        role.setName("admin");
+        roleRepository.save(role);
+        creator.setRole(role);
+        creatorManager.addCreator(creatorMapper.CreatorToCreatorDTOADD(creator));
+
+        Video video = new Video();
+        video.setName("last video");
+        video.setDescription("kykhla3");
         video.setUrl("/safir.mp4");
-        videoManager.updateVideo(video);
-        creator.setUsername("sidna");
-        creatorManager.updateCreator(creator);
-        videoManager.deleteVideo(videoManager.getVideoById(2));
-        creatorManager.checkLogin("sidna","1234" );
+        video.setDatePublication(new Date(1999,12,01));
+        videoManager.addVideo(videoMapper.VideoToVideoDTOADD(video));
+        System.out.println(creator.getUsername());
+        video.setCreator(creator);
+
+
+
+        creator.addVideo(video);
+        videoManager.updateVideo(videoMapper.VideoToVideoDTOADD(video));
+        creatorManager.addCreator(creatorMapper.CreatorToCreatorDTOADD(creator));
+
+
+        Privilege remove = new Privilege(1,"remove",null);
+        privilegesRepository.save(remove);
+        Role user = new Role();
+        user.setName("name");
+        Role admin = new Role();
+        admin.setName("admin");
+        admin.addPrivilege(remove);
+        roleRepository.save(admin);
+        CreatorDTOADD creator = new CreatorDTOADD();
+        creator.setRole(admin);
+        creator.setMail("admin@mail.com");
+        creator.setPassword("password");
+        creator.setUsername("admin");
+        creator.setProfile("admin.jpeg");
+        creatorService.addCreator(creator);
+        admin.addCreator(creatorMapper.CreatorDTOADDToCreator(creator));
+        roleRepository.save(user);
+
+        */
 
     }
 }

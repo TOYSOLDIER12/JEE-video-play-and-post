@@ -1,85 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
 
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: relative; /* Make container relative for absolute positioning */
-        }
-
-        .video {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .video h2 {
-            margin-top: 0;
-            margin-bottom: 10px; /* Add margin-bottom to video title */
-        }
-
-        .video video {
-            width: 100%;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            align-items: center;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .profile span {
-            font-weight: bold;
-            font-size: 16px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
+
+    <div class="topnav">
+        <a class="active" th:href="@{/index}">Home</a>
+        <a th:href="@{/my-videos/{username}(username=${username})}">My Videos</a>
+    </div>
+
+
+
 <div class="container">
     <h1>Your Index me Lord
-    <span th:text="${username}"></span>
+        <span th:text="${username}"></span>
     </h1>
+    <div class="login-logout-button" sec:authorize="isAnonymous()">
+        <i class="fas fa-sign-in-alt"></i>
+        <a th:href="@{/login}">Login</a>
+    </div>
+    <div class="login-logout-button" sec:authorize="isAuthenticated()">
+        <i class="fas fa-sign-out-alt"></i>
+        <a th:href="@{/logout}" th:after-signout="clear-session">Logout</a>
+    </div>
+
     <div class="videos">
         <div th:each="video : ${videos}" class="video">
             <div class="profile">
-                <img th:src="${video.creator.profile}" alt="Profile Picture">
-                <span th:text="${video.creator.username}"></span>
+                <img th:src="${video.getCreatorDTO().getProfile()}" alt="Profile Picture">
+                <span th:text="${video.getCreatorDTO().getUsername()}"></span>
             </div>
-            <h2 th:text="${video.name}" style="margin-bottom:40px; margin-left:150px;">Video Title</h2>
-            <video controls loop autoplay>
-                <source th:src="${video.url}" type="video/mp4">
-                Your browser does not support the video tag.
+            <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2> <!-- Adjust margin-left to match profile -->
+            <video controls loop autoplay muted>
+                <source th:src="${video.getUrl}" type="video/mp4">
+                gha bdel pc hhhh
             </video>
+            <div class="like-comment-buttons">
+                <div class="reactions">
+                    <div th:each="type : ${T(ma.xproce.video.dao.enumerations.Type).values()}">
+                        <i th:class="'fas ' + ${iconClasses[type.name()]}"></i>
+                        <span th:text="${videoReactions[video.id][type.name()]}"></span>
+                        <button class="reaction-button" th:data-reaction="${type.name()}" th:data-video-id="${video.id}" onclick="handleReactionClick(this)">React</button>
+                    </div>
+                </div>
+                <div class="comments">
+                    <button class="btn" th:href="@{'/video=' + ${video.id} + '/comments'}"><i class="fas fa-comment"></i></button>
+                    <span th:text="${video.getComments()?.size()}"></span>
+                </div>
+            </div>
+                <div class="add-friend-button" th:if="${video.getCreatorDTO().getUsername() != username}" th:data-username="${video.getCreatorDTO().getUsername()}">
+                    <i class="fas fa-user-plus"></i>
+                    Add Friend
+                </div>
+            </div>
+
         </div>
+
     </div>
-</div>
+
 </body>
 </html>

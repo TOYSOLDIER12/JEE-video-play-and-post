@@ -2,15 +2,25 @@ package ma.xproce.video.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import ma.xproce.video.dao.entity.Comment;
+import ma.xproce.video.dao.entity.Reaction;
+import ma.xproce.video.dao.entity.Video;
+import ma.xproce.video.dao.enumerations.Type;
+import ma.xproce.video.service.CommentManager;
+import ma.xproce.video.service.CommentService;
+import ma.xproce.video.service.dtos.*;
+import ma.xproce.video.service.mapper.CreatorMapper;
+import ma.xproce.video.service.mapper.ReactionMiniMapper;
+import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.SecurityRequestMatchersManagementContextConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ma.xproce.video.dao.entity.Creator;
-import ma.xproce.video.dao.entity.Video;
 import ma.xproce.video.service.CreatorManager;
 import ma.xproce.video.service.VideoManager;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +30,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 public class VideoController {
@@ -35,28 +43,37 @@ public class VideoController {
 
     @Autowired
     private CreatorManager creatorManager;
+    @Autowired
+    CreatorMapper creatorMapper;
+    @Autowired
+    VideoMapper videoMapper;
+    @Autowired
+    private CommentManager commentManager;
+    @Autowired
+    private SecurityRequestMatchersManagementContextConfiguration.MvcRequestMatcherConfiguration mvcRequestMatcherConfiguration;
 
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("loggedIn") != null && (boolean) session.getAttribute("loggedIn")){
-            System.out.println("logged "+ session.getAttribute("username"));
+    public String index(HttpSession session) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()){
+            session.setAttribute("username", authentication.getName());
+            session.setAttribute("loggedIn", true);
             return "redirect:/index";
         } else {
             return "redirect:/login";
         }
     }
-    @GetMapping("/my-videos")
-    public String videoIndex(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("username") != null) {
-            String username = (String) session.getAttribute("username");
-            Optional<Creator> optionalCreator = creatorManager.findByUsername(username);
-            if (optionalCreator.isPresent()) {
-                Creator creator = optionalCreator.get();
-                Optional<List<Video>> optionalVideos = videoManager.getVideoByCreator(creator);
-                List<Video> videos = optionalVideos.orElse(Collections.emptyList());
-                model.addAttribute("videos", videos);
+    @GetMapping("/my-videos/{username}")
+    public String videoIndex(Model model, @PathVariable String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()){
+            CreatorDTO creator = creatorManager.findByUsername(username);
+            if (creator !=null) {
+                model.addAttribute("creator", creator);
+                List<VideoDTO> optionalVideos = creator.getVideosDTO();
+                Map<Type, String> iconClasses = ReactionMiniMapper.getIconClasses();
+                model.addAttribute("iconClasses", iconClasses);
+                model.addAttribute("videos", optionalVideos);
             } else {
                 System.out.println("who are you again? what u doing here? go back to sign");
                 return "redirect:/login";
@@ -70,14 +87,31 @@ public class VideoController {
         return "my-videos";
     }
     @GetMapping("/index")
-    public String index(Model model,Model model1, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("username") != null) {
-                Optional<Creator> optionalCreator = creatorManager.findByUsername((String) session.getAttribute("username"));
-                Creator creator = optionalCreator.get();
-                model1.addAttribute("username", creator.getUsername());
-                List<Video> videos = videoManager.getAllVideos();
+    public String index(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()){
+                String username = authentication.getName();
+                CreatorDTO creator = creatorManager.findByUsername(username);
+                if (creator == null) {
+                    return "redirect:/login";
+                }
+                model.addAttribute("username", creator.getUsername());
+                List<VideoDTO> videos = videoManager.getAllVideos();
+                Map<Type, String> iconClasses = ReactionMiniMapper.getIconClasses();
+
+                Map<Long, Map<String, Integer>> videoReactions = new HashMap<>();
+                for (VideoDTO video : videos) {
+                    Map<String, Integer> reactionCounts = new HashMap<>();
+                    for (Type type : Type.values()) {
+                        reactionCounts.put(type.name(), getReactionCount(video.getReactions(), type));
+                    }
+                    videoReactions.put(video.getId(), reactionCounts);
+                }
+
+                model.addAttribute("videoReactions", videoReactions);
+                model.addAttribute("iconClasses", iconClasses);
                 model.addAttribute("videos", videos);
+
 
         }
         else {
@@ -86,6 +120,93 @@ public class VideoController {
         }
 
         return "index";
+    }
+    public int getReactionCount(List<Reaction> reactions, Type type) {
+        return (int) reactions.stream().filter(r -> r.getType() == type).count();
+    }
+
+    @GetMapping("/video={id}/comments")
+    public String getComment(@PathVariable(name = "id")long id, Model model){
+        VideoDTO videoDTO = videoManager.getVideoById(id);
+        if (videoDTO == null){
+            return "redirect:/index";
+        }
+        model.addAttribute("video", videoDTO);
+        return "comment";
+    }
+    @PostMapping("/video={id}/comments")
+    public String postComment(@PathVariable(name = "id")long id,String commentContenu) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()) {
+
+            VideoDTO videoDTO = videoManager.getVideoById(id);
+            if (videoDTO == null) {
+                return "redirect:/index";
+            }
+            CreatorDTO creatorDTO = creatorManager.findByUsername(authentication.getName());
+            Creator creator = creatorMapper.CreatorDTOToCreator(creatorDTO);
+            Video video = videoMapper.VideoDTOTOVideo(videoDTO);
+
+            Comment comment = new Comment();
+            comment.setContent(commentContenu);
+            comment.setDate(LocalDateTime.now());
+
+            creatorDTO = creatorManager.updateCreator(creatorMapper.CreatorToCreatorDTOADD(creator));
+            creator = creatorMapper.CreatorDTOToCreator(creatorDTO);
+
+            comment.setCreator(creator);
+            comment.setVideo(video);
+            creator.addComment(comment);
+
+
+            System.out.println(creator.getId());
+            commentManager.addComment(comment);
+            System.out.println(creator.getComments().size());
+            System.out.println(comment.getCreator().getUsername());
+
+            video.addComment(comment);
+
+
+            return "redirect:/video="+id+"/comments";
+        }
+        return "redirect:/index";
+    }
+
+
+    @GetMapping("/deleteVideo")
+    public String deleteVideo(@RequestParam(name = "id")long id, HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        VideoDTO video = videoManager.getVideoById(id);
+        if (authentication.isAuthenticated()){
+            CreatorDTO currentUser = creatorManager.findByUsername(authentication.getName());
+            if (Objects.equals(video.getCreatorDTO().getUsername(), currentUser.getUsername()) || currentUser.getRole().getName().equals("admin")) {
+                videoManager.deleteVideo(id);
+                return "/index";
+            }
+        }
+        else
+            System.out.println("no can do");
+            return "/index";
+
+    }
+    @GetMapping("/updateVideo")
+    public String updateVideo(@RequestParam(name = "id")long id,@RequestParam(name = "name")String name,@RequestParam(name = "description")String description, HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        VideoDTO videoDTO = videoManager.getVideoById(id);
+        if (authentication.isAuthenticated()){
+            CreatorDTO currentUser = creatorManager.findByUsername(authentication.getName());
+            if (videoDTO.getCreatorDTO().getUsername() == currentUser.getUsername() || currentUser.getRole().getName().equals("admin")) {
+                VideoDTOADD videoDTOADD = videoMapper.VideoToVideoDTOADD(videoMapper.VideoDTOTOVideo(videoDTO));
+                videoDTOADD.setName(name);
+                videoDTOADD.setDescription(description);
+                videoManager.updateVideo(videoDTOADD);
+                return "/index";
+            }
+        }
+        else
+            System.out.println("no can do");
+        return "/index";
+
     }
 
     @GetMapping("/post")
@@ -101,10 +222,10 @@ public class VideoController {
             System.out.println("wtf is this bogus");
             return "rediret:post?error";
         }
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("username") != null) {
-            String username = (String) session.getAttribute("username");
-            Optional<Creator> optionalCreator = creatorManager.findByUsername(username);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            CreatorDTO creator = creatorManager.findByUsername(username);
 
             byte[] bytes = file.getBytes();
             String originalFilename = file.getOriginalFilename();
@@ -113,17 +234,20 @@ public class VideoController {
             Path uploadPath = Paths.get(uploadDir, uniqueFilename);
             Files.write(uploadPath, bytes);
 
-            if (optionalCreator.isPresent()) {
-                Creator creator = optionalCreator.get();
-                Video video = new Video();
-                video.setName(name);
+            if (creator != null) {
+                VideoDTOADD video = new VideoDTOADD();
+                video.setName(name);    
                 video.setUrl("/"+uniqueFilename);
-                video.setCreator(creator);
+                Creator creator1 = creatorMapper.CreatorDTOToCreator(creator);
+                CreatorDTOADD creatorDTOADD = creatorMapper.CreatorToCreatorDTOADD(creator1);
+                video.setCreator(creator1);
+
                 videoManager.addVideo(video);
             }
         }
         return "redirect:/index";
     }
+
 
 
 }

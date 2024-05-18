@@ -1,69 +1,95 @@
 package ma.xproce.video.service;
 
 import ma.xproce.video.dao.entity.Creator;
+
 import ma.xproce.video.dao.repository.CreatorRepository;
+import ma.xproce.video.service.dtos.CreatorDTO;
+import ma.xproce.video.service.dtos.CreatorDTOADD;
+import ma.xproce.video.service.mapper.CreatorMapper;
+import ma.xproce.video.service.mapper.HolyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class CreatorService implements CreatorManager {
     @Autowired
     CreatorRepository creatorRepository;
+    @Autowired
+    CreatorMapper creatorMapper;
+    @Autowired
+    HolyMapper holyMapper;
+
     @Override
-    public Creator addCreator(Creator creator) {
-        if(creator.getUsername().isEmpty() || creator.getMail().isEmpty()) {
+    public CreatorDTO addCreator(CreatorDTOADD creatorDTOADDD) {
+        if(creatorDTOADDD.getUsername().isEmpty() || creatorDTOADDD.getMail().isEmpty()) {
             System.out.println("no name nor mail wtf");
             return null;
         }
-        return creatorRepository.save(creator);
+        Creator creator = creatorMapper.CreatorDTOADDToCreator(creatorDTOADDD);
+        creatorRepository.save(creator);
+        CreatorDTO creatorDTO = creatorMapper.CreatorToCreatorDTO(creator);
+        return creatorDTO;
     }
 
     @Override
-    public Creator updateCreator(Creator creator) {
-        Optional<Creator> existingCreator = creatorRepository.findById(creator.getId());
+    public CreatorDTO updateCreator(CreatorDTOADD creatorDTOADD) {
 
+        Optional<Creator> existingCreator = creatorRepository.findByUsername(creatorDTOADD.getUsername());
         if(existingCreator.isEmpty()) {
-            System.out.println("There ain't no bloody Creator with this bleedin' name: " + creator.getUsername());
+            System.out.println(creatorDTOADD.getId());
+            System.out.println("There ain't no bloody Creator with this bleedin' name: " + creatorDTOADD.getUsername());
             return null;
         }
+        Creator toUpdate = creatorMapper.CreatorDTOADDToCreator(creatorDTOADD);
+        Creator creator = existingCreator.get();
+        creator.setMail(toUpdate.getMail());
+        creator.setUsername(toUpdate.getUsername());
+        creator.setVideos(toUpdate.getVideos());
 
-        Creator oldCreator = existingCreator.get();
-        oldCreator.setMail(creator.getMail());
-        oldCreator.setUsername(creator.getUsername());
-        oldCreator.setVideos(creator.getVideos());
-
-        return creatorRepository.save(oldCreator);
+        creatorRepository.save(creator);
+        CreatorDTO creatorDTO = creatorMapper.CreatorToCreatorDTO(creator);
+        return creatorDTO;
     }
 
     @Override
-    public boolean deleteCeator(Creator creator) {
-        Optional<Creator> existingCreator = creatorRepository.findById(creator.getId());
+    public boolean deleteCeator(long id) {
+
+        Optional<Creator> existingCreator = creatorRepository.findById(id);
         if (existingCreator.isEmpty()) {
-            System.out.println("No fookin' video found with that pissin' ID: " + creator.getId());
+            System.out.println("No fookin' video found with that pissin' ID: " + id);
             return false;
         }
 
         creatorRepository.delete(existingCreator.get());
 
-        return !creatorRepository.existsById(creator.getId());
+        return !creatorRepository.existsById(id);
     }
 
     @Override
-    public List<Creator> getAllCreators() {
-
-        return creatorRepository.findAll();
+    public List<CreatorDTO> getAllCreators() {
+        List<Creator> creators = creatorRepository.findAll();
+        List<CreatorDTO> creatorDTOS = new ArrayList<>();
+        for (Creator creator : creators) {
+            CreatorDTO creatorDTO = holyMapper.ToCreatorDTO(creator);
+            creatorDTOS.add(creatorDTO);
+        }
+        return creatorDTOS;
     }
 
     @Override
-    public Creator getById(long id) {
-        if(creatorRepository.getById(id) == null) {
+    public CreatorDTO getById(long id) {
+        if(!creatorRepository.existsById(id)) {
             System.out.println("no creator was found matching that id" + id);
             return null;
         }
-        return creatorRepository.getById(id);
+        Creator creator = creatorRepository.findById(id).get();
+        CreatorDTO creatorDTO = holyMapper.ToCreatorDTO(creator);
+        return creatorDTO;
     }
 
     @Override
@@ -85,11 +111,14 @@ public class CreatorService implements CreatorManager {
     }
 
     @Override
-    public Optional<Creator> findByUsername(String username) {
+    public CreatorDTO findByUsername(String username) {
         Optional<Creator> existingCreator = creatorRepository.findByUsername(username);
         if(existingCreator.isPresent()){
-            return existingCreator;
+            Creator creator = existingCreator.get();
+            CreatorDTO creatorDTO = holyMapper.ToCreatorDTO(creator);
+            return creatorDTO;
         }
         return null;
     }
+
 }

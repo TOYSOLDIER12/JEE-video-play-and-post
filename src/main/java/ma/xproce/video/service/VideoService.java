@@ -1,29 +1,55 @@
 package ma.xproce.video.service;
 
+import ma.xproce.video.dao.entity.Comment;
 import ma.xproce.video.dao.entity.Creator;
+import ma.xproce.video.dao.entity.Reaction;
 import ma.xproce.video.dao.entity.Video;
+import ma.xproce.video.dao.repository.CreatorRepository;
 import ma.xproce.video.dao.repository.VideoRepository;
+import ma.xproce.video.service.dtos.CreatorDTO;
+import ma.xproce.video.service.dtos.VideoDTO;
+import ma.xproce.video.service.dtos.VideoDTOADD;
+import ma.xproce.video.service.mapper.CreatorMapper;
+import ma.xproce.video.service.mapper.HolyMapper;
+import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VideoService implements VideoManager {
-@Autowired
+    @Autowired
     VideoRepository videoRepository;
+    @Autowired
+    CreatorMapper creatorMapper;
+    @Autowired
+    VideoMapper videoMapper;
+    @Autowired
+    HolyMapper holyMapper;
+    @Autowired
+    private CreatorRepository creatorRepository;
+
     @Override
-    public Video addVideo(Video video) {
-        if (video.getUrl().isEmpty()){
+    public VideoDTO addVideo(VideoDTOADD videoDTOADD) {
+        if (videoDTOADD.getUrl().isEmpty()){
             System.out.println("no url was given");
             return null;
         }
-        return videoRepository.save(video);
+        Creator creator = creatorRepository.findByUsername(videoDTOADD.getCreator().getUsername())
+                .orElseThrow(() -> new RuntimeException("Creator not found"));
+
+        Video video = videoMapper.VideoDTOADDTOVideo(videoDTOADD);
+        video.setCreator(creator);
+        videoRepository.save(video);
+        return videoMapper.VideoToVideoDTO(video);
     }
 
     @Override
-    public Video updateVideo(Video video) {
+    public VideoDTO updateVideo(VideoDTOADD videoDTOADD) {
+        Video video = videoMapper.VideoDTOADDTOVideo(videoDTOADD);
         Optional<Video> existingVideo = videoRepository.findById(video.getId());
 
         if(existingVideo.isEmpty()) {
@@ -38,41 +64,57 @@ public class VideoService implements VideoManager {
         oldVideo.setDescription(video.getDescription());
         oldVideo.setUrl(video.getUrl());
 
-        return videoRepository.save(oldVideo);
-
+        videoRepository.save(oldVideo);
+        VideoDTO videoDTO = holyMapper.ToVideoDTO(oldVideo);
+        return videoDTO;
     }
 
     @Override
-    public boolean deleteVideo(Video video) {
-        Optional<Video> existingVideo = videoRepository.findById(video.getId());
+    public boolean deleteVideo(long id) {
+        Optional<Video> existingVideo = videoRepository.findById(id);
         if (existingVideo.isEmpty()) {
-            System.out.println("No fookin' video found with that pissin' ID: " + video.getId());
+            System.out.println("No fookin' video found with that pissin' ID: " + id);
             return false;
         }
 
         videoRepository.delete(existingVideo.get());
 
-        return !videoRepository.existsById(video.getId());
+        return !videoRepository.existsById(id);
     }
 
 
     @Override
-    public List<Video> getAllVideos() {
-        return videoRepository.findAll();
+    public List<VideoDTO> getAllVideos() {
+        List<Video> videos = videoRepository.findAll();
+        List<VideoDTO> videoDTOS = new ArrayList<>();
+        for ( Video video : videos ) {
+            VideoDTO videoDTO = holyMapper.ToVideoDTO(video);
+            videoDTOS.add(videoDTO);
+        }
+        return videoDTOS;
     }
 
     @Override
-    public Video getVideoById(long id) {
-        if(videoRepository.getById(id) == null) {
+    public VideoDTO getVideoById(long id) {
+        if(!videoRepository.existsById(id)) {
             System.out.println("no creator was found matching that id" + id);
             return null;
         }
-        return videoRepository.getById(id);
+        Video video = videoRepository.getById(id);
+        return holyMapper.ToVideoDTO(video);
     }
     @Override
-    public Optional<List<Video>> getVideoByCreator(Creator creator) {
-            return videoRepository.findVideosByCreator(creator);
-        }
+    public List<VideoDTO> getVideoByCreator(CreatorDTO creatorDTO) {
+            Creator creator = creatorMapper.CreatorDTOToCreator(creatorDTO);
+            List<VideoDTO> videoDTOS = new ArrayList<>();
+            for (Video video : creator.getVideos()){
+                VideoDTO videoDTO = holyMapper.ToVideoDTO(video);
+                videoDTOS.add(videoDTO);
+            }
+        return videoDTOS;
     }
+
+
+}
 
 
