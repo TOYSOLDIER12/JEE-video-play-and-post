@@ -1,6 +1,8 @@
 package ma.xproce.video.service;
 
+import ma.xproce.video.dao.entity.Creator;
 import ma.xproce.video.dao.entity.Reaction;
+import ma.xproce.video.dao.entity.Video;
 import ma.xproce.video.dao.repository.CreatorRepository;
 import ma.xproce.video.dao.repository.ReactionRepository;
 import ma.xproce.video.dao.repository.VideoRepository;
@@ -57,4 +59,28 @@ public class ReactionService implements ReactionManager{
         Optional<Reaction> reaction1 = reactionRepository.findById(id);
         return reaction1.orElse(null);
     }
+
+    @Override
+    public Reaction checkReaction(Creator creator, Video video) {
+        List<Reaction> reactions = reactionRepository.findByCreatorAndVideo(creator, video);
+
+        if (reactions.isEmpty())
+            return null;
+
+
+        return reactions.get(0);
+    }
+
+
+    @Override
+    public boolean removeReactionVideoCreator(Creator creator, Video video) {
+
+        List<Reaction> reactions = reactionRepository.findByCreatorAndVideo(creator, video);
+        reactionRepository.delete(reactions.get(0));
+        if(reactionRepository.findByCreatorAndVideo(creator,video) !=null)
+            return false;
+        return true;
+    }
+
+
 }

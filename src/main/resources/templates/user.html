@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="/css/user.css">
+</head>
+<body>
+<div class="container">
+    <h1>User Profile</h1>
+    <form th:action="@{/user/{username}(username = ${creator.getUsername()})}" method="post">
+        <div class="profile-picture">
+            <img th:src="|${creator.getProfile()}|" alt="your face mf">
+            <input type="file" name="profile" id="profile-picture-input">
+            <label for="profile-picture-input">Change Picture</label>
+        </div>
+        <div class="form-field">
+            <label for="username">Username:</label>
+            <input type="text" name="name" id="username" th:value="${creator.getUsername()}">
+        </div>
+        <div class="form-field">
+            <label for="email">Email:</label>
+            <input type="email" name="mail" id="email" th:value="${creator.getMail()}">
+        </div>
+        <div class="button-group">
+            <button type="submit" class="save-button" >Save</button>
+            <button type="button" class="delete-button" th:onclick="|deleteUser('${creator.getUsername()}');|">Delete</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function deleteUser(username) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/delete/' + username;
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</body>
+</html>

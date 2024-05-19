@@ -161,8 +161,6 @@ public class VideoController {
 
             System.out.println(creator.getId());
             commentManager.addComment(comment);
-            System.out.println(creator.getComments().size());
-            System.out.println(comment.getCreator().getUsername());
 
             video.addComment(comment);
 

@@ -17,7 +17,7 @@ public class CreatorDTO {
     private Long id;
     private Role role;
     private String username;
-    private String email;
+    private String mail;
     private String profile;
     private List<VideoDTO> videosDTO = new ArrayList<>();
     private List<Creator> friends = new ArrayList<>();

@@ -111,12 +111,12 @@
     </div>
     <div class="profile-details">
         <h3>About</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a semper justo. Sed vehicula, risus vel fermentum auctor, orci magna consequat urna, et ultricies elit nunc in metus.</p>
+        <p>a feature maybe? guess no</p>
     </div>
     <h3>Videos</h3>
     <div class="video-grid">
         <div th:each="video : ${videos}" class="video-card">
-            <video controls>
+            <video controls loop autoplay muted>
                 <source th:src="${video.getUrl()}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>

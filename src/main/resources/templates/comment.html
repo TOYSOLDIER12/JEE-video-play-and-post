@@ -5,37 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Page</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/comment.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7ie5s/F41U5Lz5WDe4O/RWgSB1f6X/yE6N2zM2/zEB8k58z1J/wZQdww==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-<div class="container">
-    <!-- Video Display Section -->
-    <div class="video-section">
-        <div class="video">
-            <!-- Video Player -->
-            <video controls loop autoplay>
-                <source th:src="${video.getUrl()}" type="video/mp4">
-                Video not available
-            </video>
-
-            <!-- Video Details -->
-            <div class="video-details">
-                <h2 th:text="${video.getName()}">Video Title</h2>
-                <div class="like-comment-buttons">
-                    <!-- Add like and comment buttons here -->
-                </div>
-            </div>
+<div class="videos">
+    <div  class="video">
+        <div class="profile">
+            <p>
+                <a th:href="@{/my-videos/{username}(username=${video.getCreatorDTO().getUsername()})}">
+                    <img th:src="${video.getCreatorDTO().getProfile()}" alt="Profile Picture" >
+                </a>
+            </p>
+            <span th:text="${video.getCreatorDTO().getUsername()}"></span>
         </div>
+        <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2> <!-- Adjust margin-left to match profile -->
+        <video controls loop autoplay muted>
+            <source th:src="${video.getUrl}" type="video/mp4">
+            gha bdel pc hhhh
+        </video>
+
     </div>
 
+</div>
     <!-- Comment Section -->
     <div class="comment-section">
         <h3>Comments</h3>
         <div class="comments">
             <div class="comment" th:each="comment : ${video.getComments()}">
-                <!-- User Profile Image -->
-                <img class="profile-image" th:src="${comment.getCreator().getProfile()}" alt="Profile Picture">
+                <a th:href="@{/my-videos/{username}(username=${comment.getCreator().getUsername()})}">
+                    <img class="profile-image" th:src="${comment.getCreator().getProfile()}" alt="Profile Picture">
+                </a>
                 <!-- User Name -->
                 <span class="username" th:text="${comment.getCreator().getUsername()}"></span>
                 <!-- Comment Content -->

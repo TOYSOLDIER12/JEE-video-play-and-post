@@ -2,10 +2,11 @@ package ma.xproce.video.dao.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ma.xproce.video.dao.enumerations.Stat;
+
 
 import java.util.ArrayList;
-import java.util.Collection;
+
+import java.util.List;
 
 
 @ToString
@@ -25,20 +26,20 @@ public class Creator {
     @ManyToOne (fetch = FetchType.EAGER)
     private Role role;
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
-    private Collection<Video> videos = new ArrayList<>();
+    private List<Video> videos = new ArrayList<>();
     @ManyToMany
-    private Collection<Creator> friends = new ArrayList<>();
+    private List<Creator> friends = new ArrayList<>();
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
-    private Collection<FriendRequest> friendRequests = new ArrayList<>();
+    private List<FriendRequest> friendRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
-    private Collection<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany
-    private Collection<Creator> requesters = new ArrayList<>();
+    private List<Creator> requesters = new ArrayList<>();
 
     @OneToMany (mappedBy = "creator",fetch = FetchType.LAZY)
-    private Collection<Reaction> reactions = new ArrayList<>();
+    private List<Reaction> reactions = new ArrayList<>();
 
     public void addReaction(Reaction reaction) {
         this.reactions.add(reaction);

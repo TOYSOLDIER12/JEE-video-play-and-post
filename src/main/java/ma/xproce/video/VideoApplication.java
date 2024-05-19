@@ -9,6 +9,7 @@ import ma.xproce.video.dao.repository.PrivilegesRepository;
 import ma.xproce.video.dao.repository.RoleRepository;
 import ma.xproce.video.service.*;
 
+import ma.xproce.video.service.dtos.CreatorDTO;
 import ma.xproce.video.service.dtos.CreatorDTOADD;
 import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.VideoMapper;
@@ -80,7 +81,7 @@ public class VideoApplication implements CommandLineRunner {
         Privilege remove = new Privilege(1,"remove",null);
         privilegesRepository.save(remove);
         Role user = new Role();
-        user.setName("name");
+        user.setName("user");
         Role admin = new Role();
         admin.setName("admin");
         admin.addPrivilege(remove);
@@ -90,12 +91,13 @@ public class VideoApplication implements CommandLineRunner {
         creator.setMail("admin@mail.com");
         creator.setPassword("password");
         creator.setUsername("admin");
-        creator.setProfile("admin.jpeg");
+        creator.setProfile("/admin.jpeg");
         creatorService.addCreator(creator);
         admin.addCreator(creatorMapper.CreatorDTOADDToCreator(creator));
         roleRepository.save(user);
 
-        */
+*/
+
 
     }
 }

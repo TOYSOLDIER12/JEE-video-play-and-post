@@ -1,46 +1,7 @@
-/* Global Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Video Section Styles */
-.video-section {
-    margin-bottom: 20px;
-}
-
-.video {
-    position: relative;
-}
-
-video {
-    width: 100%;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.video-details {
-    padding: 10px;
-}
-
-.video-details h2 {
-    margin-top: 0;
-}
-
-/* Comment Section Styles */
 .comment-section {
     margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
 }
 
 .comments {
@@ -53,17 +14,56 @@ video {
     margin-bottom: 10px;
 }
 
-.profile-image {
+.profile {
+    position: absolute;
+    top: -40px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 1; /* Ensure profile is above the video */
+}
+
+.profile img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
+.profile span {
+    font-weight: bold;
+    font-size: 16px;
+}
 .username {
     font-weight: bold;
+    margin-right: 10px;
 }
 
 .comment-content {
-    margin: 0;
+    flex: 1;
+}
+
+.add-comment-form {
+    margin-top: 20px;
+}
+
+.add-comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.add-comment-form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.add-comment-form button:hover {
+    background-color: #45a049;
 }

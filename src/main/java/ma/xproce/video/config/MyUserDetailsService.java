@@ -4,7 +4,7 @@ import ma.xproce.video.dao.entity.MyUserPrincipal;
 import ma.xproce.video.service.CreatorManager;
 import ma.xproce.video.service.dtos.CreatorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

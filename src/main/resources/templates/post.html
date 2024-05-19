@@ -59,7 +59,7 @@
 <body>
 <div class="container">
     <h2>Add Video</h2>
-    <form th:action="/post" method="post" enctype="multipart/form-data">
+    <form th:action="@{/post}" method="post" enctype="multipart/form-data">
         <div>
             <label for="name">Video Name:</label>
             <input type="text" id="name" name="name" required>

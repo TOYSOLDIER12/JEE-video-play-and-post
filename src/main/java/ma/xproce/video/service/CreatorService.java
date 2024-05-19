@@ -8,6 +8,7 @@ import ma.xproce.video.service.dtos.CreatorDTOADD;
 import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.HolyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class CreatorService implements CreatorManager {
     @Override
     public CreatorDTO updateCreator(CreatorDTOADD creatorDTOADD) {
 
-        Optional<Creator> existingCreator = creatorRepository.findByUsername(creatorDTOADD.getUsername());
+        Optional<Creator> existingCreator = creatorRepository.findById(creatorDTOADD.getId());
         if(existingCreator.isEmpty()) {
             System.out.println(creatorDTOADD.getId());
             System.out.println("There ain't no bloody Creator with this bleedin' name: " + creatorDTOADD.getUsername());
@@ -119,6 +120,13 @@ public class CreatorService implements CreatorManager {
             return creatorDTO;
         }
         return null;
+    }
+    @Override
+    public boolean checkPrivilege(Authentication authentication , String username){
+
+
+
+        return true;
     }
 
 }
