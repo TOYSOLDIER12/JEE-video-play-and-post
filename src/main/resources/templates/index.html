@@ -4,28 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index page</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"  crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Index Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/javascript/javascript.js"></script>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
-
-    <div class="topnav">
-        <a class="active" th:href="@{/index}">Home</a>
-        <a class="active" th:href="@{/my-videos/{username}(username=${username})}">My Videos</a>
-        <a class="active" th:href="@{/post}" >Post</a>
+<div class="topnav">
+    <a class="active" th:href="@{/index}">Home</a>
+    <a class="active" th:href="@{/my-videos/{username}(username=${username})}">My Videos</a>
+    <a class="active" th:href="@{/post}">Post</a>
+    <div class="friend-requests">
+        <div class="hover-menu">
+            <i class="fas fa-user-friends"></i>
+            <div class="hover-menu-content">
+                <!-- Iterate over friend requests and display them -->
+                <div th:each="request : ${friendRequests}">
+                    <button class="friend-request" th:data-request="${request}" onclick="handleFriendRequest(this)">
+                        <!-- Display relevant information about the friend request -->
+                        <span th:text="${request.senderName}"></span> sent you a friend request
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-
-
+    <form method="get" th:action="@{indexpage}">
+        <input type="text" name="search" th:value="${keyword}" />
+        <button class="btn btn-primary" type="submit"> search</button>
+    </form>
+</div>
 
 <div class="container">
-    <h1>Your Index me Lord
-        <span th:text="${username}"></span>
-    </h1>
+    <h1>Your Index, my Lord <span th:text="${username}"></span></h1>
     <div class="login-logout-button" sec:authorize="isAnonymous()">
         <i class="fas fa-sign-in-alt"></i>
         <a th:href="@{/login}">Login</a>
@@ -40,12 +51,15 @@
             <div class="profile">
                 <p>
                     <a th:href="@{/my-videos/{username}(username=${video.getCreatorDTO().getUsername()})}">
-                        <img th:src="${video.getCreatorDTO().getProfile()}" alt="Profile Picture" >
+                        <img th:src="${video.getCreatorDTO().getProfile()}" alt="Profile Picture">
                     </a>
                 </p>
                 <span th:text="${video.getCreatorDTO().getUsername()}"></span>
+                <div th:if="${video.getCreatorDTO().getUsername() != username}" class="add-friend-button" th:data-username="${video.getCreatorDTO().getUsername()}">
+                    <i th:if="${video.getCreatorDTO().getUsername() != username}" class="fas fa-user-plus add-friend" th:data-username="${video.getCreatorDTO().getUsername()}" onclick="handleFriendRequest(this)"></i>
+                </div>
             </div>
-            <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2> <!-- Adjust margin-left to match profile -->
+            <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2>
             <video controls loop autoplay muted>
                 <source th:src="${video.getUrl}" type="video/mp4">
                 gha bdel pc hhhh
@@ -53,9 +67,13 @@
             <div class="like-comment-buttons">
                 <div class="reactions">
                     <div th:each="type : ${T(ma.xproce.video.dao.enumerations.Type).values()}">
-                        <i th:class="'fas ' + ${iconClasses[type.name()]}"></i>
-                        <span th:text="${videoReactions[video.id][type.name()]}"></span>
-                        <button class="reaction-button" th:data-type="${type.name()}" th:data-video="${video.id}" th:data-username="${username}" onclick="handleReactionClick(this)">React</button>
+                        <i th:class="'fas ' + ${iconClasses.get(type)}"
+                           th:data-reaction-count="${videoReactions[video.id][type.name()]}"
+                           th:data-type="${type.name()}"
+                           th:data-video="${video.id}"
+                           th:data-username="${username}"
+                           onclick="handleReactionClick(this)"></i>
+                        <span  th:text="${videoReactions[video.id][type.name()]}"></span>
                     </div>
                 </div>
                 <div class="comments">
@@ -65,17 +83,16 @@
                     <span th:text="${video.getComments()?.size()}"></span>
                 </div>
             </div>
-                <div class="add-friend-button" th:if="${video.getCreatorDTO().getUsername() != username}" th:data-username="${video.getCreatorDTO().getUsername()}">
-                    <i class="fas fa-user-plus">
-                        <button class="add-friend-button" th:data-username="${username}" th:data-friend="${video.getCreatorDTO().getUsername()}" onclick="handleFriendRequest(this)"></button>
-                    </i>
-                    Add Friend
-                </div>
-            </div>
-
         </div>
-
     </div>
-
+    <div>
+        <ul class="nav nav-pills">
+            <li class="nav-item me-2" th:each="p, stat: ${pages}">
+                <a th:class="${stat.index == page} ? 'btn btn-primary active' : 'btn btn-outline-primary'"
+                   th:text="${stat.index}" th:href="@{index(page=${stat.index},search=${keyword})}"></a>
+            </li>
+        </ul>
+    </div>
+</div>
 </body>
 </html>

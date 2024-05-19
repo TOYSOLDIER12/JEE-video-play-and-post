@@ -5,6 +5,8 @@ import ma.xproce.video.dao.entity.Creator;
 import ma.xproce.video.dao.entity.FriendRequest;
 import ma.xproce.video.service.dtos.CreatorDTO;
 
+import java.util.List;
+
 public interface FriendRequestManager {
     public void acceptFriendRequest(FriendRequest friendRequest);
     public void rejectFriendRequest(FriendRequest friendRequest);
@@ -12,4 +14,5 @@ public interface FriendRequestManager {
     public FriendRequest getByReceiverSender(Creator sender, Creator receiver);
     public boolean cancelRequest(long sendId, long freundId);
     public boolean cancelRequest(FriendRequest friendRequest);
+    public List<FriendRequest> getCreatorRequest(CreatorDTO creatorDTO);
 }

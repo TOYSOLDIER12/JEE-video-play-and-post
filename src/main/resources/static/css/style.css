@@ -1,19 +1,3 @@
-.login-logout-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.login-logout-button i {
-    font-size: 20px;
-    margin-right: 5px;
-}
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -38,11 +22,11 @@ body {
 
 .video h2 {
     margin-top: 60px;
-    margin-left: 60px; /* Adjusted to fit the profile picture */
+    margin-left: 70px; /* Adjusted to fit the profile picture */
 }
 
 .video video {
-    width: 100%;
+    width: 50%; /* Resizes the video to half its original size */
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -70,6 +54,13 @@ body {
     font-weight: bold;
     font-size: 16px;
 }
+
+.add-friend {
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 .like-comment-buttons {
     display: flex;
     justify-content: space-between;
@@ -88,33 +79,17 @@ body {
     color: #007bff;
 }
 
-/* Add styles for the add friend button */
-.add-friend-button {
-    display: flex;
-    align-items: center;
-    background-color: #007bff;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.add-friend-button i {
-    font-size: 20px;
-    margin-right: 5px;
-}
-
-/* Add styles for the reactions and comments count */
 .reactions {
     display: flex;
     align-items: center;
 }
+
 .reactions div {
     display: flex;
     align-items: center;
     margin-right: 15px;
 }
+
 .reactions i {
     font-size: 20px;
     margin-right: 5px;
@@ -124,6 +99,7 @@ body {
     display: flex;
     align-items: center;
 }
+
 .comments i {
     margin-right: 5px;
 }
@@ -133,20 +109,34 @@ body {
     margin-left: 10px;
     font-weight: bold;
 }
+
 .reaction-button {
     margin-left: 5px;
     cursor: pointer;
 }
 
+.login-logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+.login-logout-button i {
+    font-size: 20px;
+    margin-right: 5px;
+}
 
-/* Add a black background color to the top navigation */
 .topnav {
     background-color: #333;
     overflow: hidden;
 }
 
-/* Style the links inside the navigation bar */
 .topnav a {
     float: left;
     color: #f2f2f2;
@@ -156,14 +146,61 @@ body {
     font-size: 17px;
 }
 
-/* Change the color of links on hover */
 .topnav a:hover {
     background-color: #ddd;
     color: black;
 }
 
-/* Add a color to the active/current link */
 .topnav a.active {
     background-color: #04AA6D;
+    color: white;
+}
+
+/* Friend Requests Hover Menu */
+.friend-requests {
+    position: relative;
+}
+
+.hover-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.hover-menu .hover-menu-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px; /* Adjust width as needed */
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.hover-menu:hover .hover-menu-content {
+    display: block;
+}
+
+.hover-menu .hover-menu-content .friend-request {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.hover-menu .hover-menu-content .friend-request:hover {
+    background-color: #ddd;
+}
+
+/* Ensure basic styles for buttons */
+.nav-pills {
+    display: flex;
+    flex-direction: row;
+}
+
+.btn-primary.active {
+    background-color: blue; /* Change the color to your preference */
     color: white;
 }

@@ -13,6 +13,9 @@ import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.HolyMapper;
 import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -92,6 +95,14 @@ public class VideoService implements VideoManager {
             videoDTOS.add(videoDTO);
         }
         return videoDTOS;
+    }
+    @Override
+    public Page<VideoDTO> searchVideo(String keyword, int page, int taille){
+        Pageable pageable = PageRequest.of(page, taille);
+        Page<Video> videos = videoRepository.findByNameContains(keyword, pageable);
+        return videos.map(video -> holyMapper.ToVideoDTO(video));
+
+
     }
 
     @Override

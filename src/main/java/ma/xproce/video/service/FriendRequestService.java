@@ -44,7 +44,7 @@ public class FriendRequestService implements FriendRequestManager{
         if(sender != null && freund != null) {
             FriendRequest friendRequest = new FriendRequest();
 
-            friendRequest.setReceiver(creatorMapper.CreatorDTOToCreator(sender));
+            friendRequest.setSender(creatorMapper.CreatorDTOToCreator(sender));
             friendRequest.setReceiver(creatorMapper.CreatorDTOToCreator(freund));
             friendRequest.setStatus(Stat.PENDING);
             creatorMapper.CreatorDTOToCreator(freund).addFriendRequest(friendRequest);
@@ -77,6 +77,12 @@ public class FriendRequestService implements FriendRequestManager{
     public boolean cancelRequest(FriendRequest friendRequest) {
         friendRequestRepository.delete(friendRequest);
         return !friendRequestRepository.existsById(friendRequest.getId());
+    }
+    @Override
+    public List<FriendRequest> getCreatorRequest(CreatorDTO creatorDTO){
+
+        return friendRequestRepository.findFriendRequestByReceiver(creatorMapper.CreatorDTOToCreator(creatorDTO));
+
     }
 
 }

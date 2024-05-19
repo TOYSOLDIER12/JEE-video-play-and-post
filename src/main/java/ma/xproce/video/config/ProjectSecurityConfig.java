@@ -15,13 +15,13 @@ public class ProjectSecurityConfig {
         http.csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/editProfile","/post","/deleteVideo","/logout","/my-videos",  "/index","/updateVideo").authenticated()
-                        .requestMatchers("/**","/webjars/**","/sign", "/login", "/static/**", "/css/**q").permitAll())
+                        .requestMatchers("/**","/webjars/**","/sign", "/login", "/static/**", "/css/**","/javascript/**").permitAll())
                 .formLogin((form) -> form
-                        .loginPage("/login")
+                        //.loginPage("/login")
                         .defaultSuccessUrl("/index", true)
                         .permitAll()
                 )
-                .logout((logout) -> logout.logoutSuccessUrl("/login"));
+                //.logout((logout) -> logout.logoutSuccessUrl("/login"));
         ;
         return http.build();
     }

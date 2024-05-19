@@ -1,41 +1,46 @@
 
 
-function handleReactionClick(button) {
-    var type = $(button).data('type');
-    var videoId = $(button).data('video');
-    var username = $(button).data('username');
+function handleReactionClick(icon) {
+    var type = $(icon).data('type');
+    var videoId = $(icon).data('video');
+    var username = $(icon).data('username');
+    var reactionCount = $(icon).data('reactioncount');
+
+    // Parse reactionCount to an integer
+    reactionCount = parseInt(reactionCount);
 
     // Send an AJAX request to the server to update the video reactions
     $.ajax({
         type: 'POST',
         url: '/api/video/reactions',
-        data: JSON.stringify({ videoId: videoId, reaction: type , username : username   }),
+        data: JSON.stringify({ videoId: videoId, reaction: type, username: username }),
         contentType: 'application/json',
         success: function(response) {
-            // Update the video reactions count on the UI
+            console.log('AJAX response:', response);
+
             if (response === "Reaction added") {
-
-                var reactionCount = parseInt($reactionCount.text());
-                $reactionCount.text(reactionCount + 1);
-
-                $button.text('Remove Reaction');
-
+                reactionCount += 1;
+                $(icon).addClass('liked');
+            } else if (response === "Reaction removed") {
+                reactionCount -= 1;
+                $(icon).removeClass('liked');
             }
 
-            else if (response === "Reaction removed") {
+            // Update the icon's reactionCount data attribute
+            $(icon).data('reactioncount', reactionCount);
 
-                var reactionCount = parseInt($reactionCount.text());
-                $reactionCount.text(reactionCount - 1);
-                // Change button text to indicate add option
-                $button.text('Add Reaction');
-
-            }
+            // Update the text content of the span next to the icon
+            $(icon).siblings('span').text(reactionCount);
         },
         error: function(xhr, status, error) {
             console.error("Error handling reaction: " + error);
         }
     });
 }
+
+
+
+
 
 function handleFriendRequest(button)  {
 

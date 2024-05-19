@@ -2,12 +2,9 @@ package ma.xproce.video.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import ma.xproce.video.dao.entity.Comment;
-import ma.xproce.video.dao.entity.Reaction;
-import ma.xproce.video.dao.entity.Video;
+import ma.xproce.video.dao.entity.*;
 import ma.xproce.video.dao.enumerations.Type;
-import ma.xproce.video.service.CommentManager;
-import ma.xproce.video.service.CommentService;
+import ma.xproce.video.service.*;
 import ma.xproce.video.service.dtos.*;
 import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.ReactionMiniMapper;
@@ -15,14 +12,12 @@ import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.SecurityRequestMatchersManagementContextConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ma.xproce.video.dao.entity.Creator;
-import ma.xproce.video.service.CreatorManager;
-import ma.xproce.video.service.VideoManager;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -50,7 +45,7 @@ public class VideoController {
     @Autowired
     private CommentManager commentManager;
     @Autowired
-    private SecurityRequestMatchersManagementContextConfiguration.MvcRequestMatcherConfiguration mvcRequestMatcherConfiguration;
+    FriendRequestManager friendRequestManager;
 
     @GetMapping("/")
     public String index(HttpSession session) {
@@ -87,7 +82,7 @@ public class VideoController {
         return "my-videos";
     }
     @GetMapping("/index")
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(name = "page", defaultValue = "0" ) int page, @RequestParam(name = "taille", defaultValue = "1" ) int taille, @RequestParam(name = "search", defaultValue = "") String keyword) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated()){
                 String username = authentication.getName();
@@ -95,9 +90,15 @@ public class VideoController {
                 if (creator == null) {
                     return "redirect:/login";
                 }
+
+
+                List< FriendRequest> friendRequests = friendRequestManager.getCreatorRequest(creator);
+                model.addAttribute("friendRequests", friendRequests);
                 model.addAttribute("username", creator.getUsername());
-                List<VideoDTO> videos = videoManager.getAllVideos();
+                Page<VideoDTO> videos = videoManager.searchVideo(keyword, page, taille);
                 Map<Type, String> iconClasses = ReactionMiniMapper.getIconClasses();
+
+
 
                 Map<Long, Map<String, Integer>> videoReactions = new HashMap<>();
                 for (VideoDTO video : videos) {
@@ -108,9 +109,19 @@ public class VideoController {
                     videoReactions.put(video.getId(), reactionCounts);
                 }
 
+
+                int[] pages = new int[videos.getTotalPages()];
+                for (int i = 0; i < pages.length; i++) {
+                    pages[i] = i;
+                }
+                model.addAttribute("pages", pages);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("keyword", keyword);
+
+
                 model.addAttribute("videoReactions", videoReactions);
                 model.addAttribute("iconClasses", iconClasses);
-                model.addAttribute("videos", videos);
+                model.addAttribute("videos", videos.getContent());
 
 
         }
