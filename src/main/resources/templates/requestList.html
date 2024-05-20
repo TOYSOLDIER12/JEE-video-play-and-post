@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>friends Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="/css/request.css">
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${username}">Friend Requests</h1>
+    <div class="friend-request" th:each="request : ${List}">
+        <div class="profile">
+            <img alt="Profile Picture" th:src="${request.getProfile()}" />
+            <span th:text="${request.getUsername()}">Username</span>
+        </div>
+        <div class="actions">
+            <button class="accept" onclick="handleAccept(this)" th:data-request-id="${request.id}">Accept</button>
+            <button class="reject" onclick="handleReject(this)" th:data-request-id="${request.id}">Reject</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

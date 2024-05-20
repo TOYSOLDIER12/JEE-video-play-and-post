@@ -19,12 +19,12 @@
 </div>
 
 <div class="container">
-        <div class="search-bar">
-            <form method="get" th:action="@{index}">
-                <input type="text" name="search" th:value="${keyword}" />
-                <button class="btn btn-primary" type="submit">Search</button>
-            </form>
-        </div>
+    <div class="search-bar">
+        <form method="get" th:action="@{index}">
+            <input type="text" name="search" th:value="${keyword}" />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    </div>
     <h1>Your Index, my Lord <span th:text="${username}"></span></h1>
     <div class="login-logout-button" sec:authorize="isAnonymous()">
         <i class="fas fa-sign-in-alt"></i>

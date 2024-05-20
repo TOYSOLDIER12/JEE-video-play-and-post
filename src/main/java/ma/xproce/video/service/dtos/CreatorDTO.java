@@ -20,8 +20,8 @@ public class CreatorDTO {
     private String mail;
     private String profile;
     private List<VideoDTO> videosDTO = new ArrayList<>();
-    private List<Creator> friends = new ArrayList<>();
-    private List<Creator> requesters = new ArrayList<>();
+    private List<CreatorDTO> friends = new ArrayList<>();
+    private List<CreatorDTO> requesters = new ArrayList<>();
     private List<Comment> comments = new ArrayList<>();
     private List<FriendRequest> friendRequests;
 

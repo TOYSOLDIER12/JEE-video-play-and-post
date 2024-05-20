@@ -10,9 +10,9 @@ public class ReactionMiniMapper {
 
     static {
         ICON_CLASSES.put(Type.bja9, "fa-thumbs-up");
-        ICON_CLASSES.put(Type.grr, "fa-thumbs-down");
+        ICON_CLASSES.put(Type.grr, "fa-angry");
         ICON_CLASSES.put(Type.sad, "fa-sad-tear");
-        ICON_CLASSES.put(Type.sba3, "fa-grin-beam");
+        ICON_CLASSES.put(Type.sba3, "fa-face-vomiting");
         ICON_CLASSES.put(Type.wahaha, "fa-laugh-beam");
     }
 

@@ -74,3 +74,16 @@ function handleFriendRequest(button)  {
 }
 
 
+function handleAccept(button) {
+    var requestId = button.getAttribute('data-request-id');
+    console.log('Accepted request from: ' + requestId);
+    // Add your AJAX call or form submission logic here
+}
+
+function handleReject(button) {
+    var requestId = button.getAttribute('data-request-id');
+    console.log('Rejected request from: ' + requestId);
+    // Add your AJAX call or form submission logic here
+}
+
+

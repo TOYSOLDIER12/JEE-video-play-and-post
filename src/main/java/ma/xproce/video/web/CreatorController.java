@@ -2,7 +2,7 @@ package ma.xproce.video.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import ma.xproce.video.dao.entity.Creator;
+
 import ma.xproce.video.dao.entity.Role;
 
 import ma.xproce.video.service.CreatorManager;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -38,6 +40,8 @@ public class CreatorController {
     private RoleService roleService;
     @Autowired
     private CreatorMapper creatorMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @GetMapping("/login")
@@ -45,19 +49,7 @@ public class CreatorController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login(Model model, @RequestParam(name = "username") String username, @RequestParam(name = "password") String password, HttpServletRequest request, HttpSession session) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.isAuthenticated()) {
-            session.setAttribute("username", username);
-            session.setAttribute("loggedIn", true);
-            return "redirect:/index";
-        } else {
-            String message = "chkon nta ??";
-            model.addAttribute("message", message);
-            return "/login";
-        }
-    }
+
 
     @GetMapping("/sign")
     public String sign() {
@@ -83,7 +75,7 @@ public class CreatorController {
         Files.write(uploadPath, bytes);
         CreatorDTOADD creator = new CreatorDTOADD();
         creator.setUsername(username);
-        creator.setPassword(password);
+        creator.setPassword(passwordEncoder.encode(password));
         creator.setProfile("/" + uniqueFilename);
         creator.setMail(mail);
         Role role = roleService.getRoleByRoleName("user");
@@ -187,5 +179,16 @@ public class CreatorController {
 
         return "redirect:/index";
     }
+    @GetMapping("/requests/{username}")
+    public String listRequests(Model model, @PathVariable(name = "username")String username){
+        CreatorDTO creatorDTO = creatorManager.findByUsername(username);
+
+        List<CreatorDTO> requests = creatorDTO.getRequesters();
+        model.addAttribute("username", creatorDTO.getUsername());
+        model.addAttribute("List", requests);
+
+        return "requestList";
+    }
+
 
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.util.Date;
@@ -43,6 +44,8 @@ public class VideoApplication implements CommandLineRunner {
     private RoleService roleService;
     @Autowired
     private PrivilegesRepository privilegesRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
         SpringApplication.run(VideoApplication.class, args);
@@ -89,7 +92,7 @@ public class VideoApplication implements CommandLineRunner {
         CreatorDTOADD creator = new CreatorDTOADD();
         creator.setRole(admin);
         creator.setMail("admin@mail.com");
-        creator.setPassword("password");
+        creator.setPassword(passwordEncoder.encode( "password"));
         creator.setUsername("admin");
         creator.setProfile("/admin.jpeg");
         creatorService.addCreator(creator);

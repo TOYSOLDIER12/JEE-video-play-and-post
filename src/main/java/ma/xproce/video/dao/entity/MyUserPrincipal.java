@@ -1,13 +1,18 @@
 package ma.xproce.video.dao.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ma.xproce.video.service.dtos.CreatorDTO;
-import org.springframework.beans.factory.BeanCreationNotAllowedException;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+
+@Getter
+@Setter
 public class MyUserPrincipal implements UserDetails {
     private CreatorDTO creatorDTO;
     private List<GrantedAuthority> authorities;

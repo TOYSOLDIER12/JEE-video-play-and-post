@@ -82,7 +82,7 @@ public class VideoController {
         return "my-videos";
     }
     @GetMapping("/index")
-    public String index(Model model, @RequestParam(name = "page", defaultValue = "0" ) int page, @RequestParam(name = "taille", defaultValue = "1" ) int taille, @RequestParam(name = "search", defaultValue = "") String keyword) {
+    public String index(Model model, @RequestParam(name = "page", defaultValue = "0" ) int page, @RequestParam(name = "taille", defaultValue = "5" ) int taille, @RequestParam(name = "search", defaultValue = "") String keyword) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated()){
                 String username = authentication.getName();
@@ -90,6 +90,7 @@ public class VideoController {
                 if (creator == null) {
                     return "redirect:/login";
                 }
+
 
 
                 List< FriendRequest> friendRequests = friendRequestManager.getCreatorRequest(creator);
@@ -122,6 +123,9 @@ public class VideoController {
                 model.addAttribute("videoReactions", videoReactions);
                 model.addAttribute("iconClasses", iconClasses);
                 model.addAttribute("videos", videos.getContent());
+
+                if (creator.getRole().getName().equals("admin"))
+                    return "/admin";
 
 
         }

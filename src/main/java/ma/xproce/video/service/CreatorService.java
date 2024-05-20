@@ -9,6 +9,7 @@ import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.HolyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class CreatorService implements CreatorManager {
     CreatorMapper creatorMapper;
     @Autowired
     HolyMapper holyMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public CreatorDTO addCreator(CreatorDTOADD creatorDTOADDD) {
@@ -95,21 +98,26 @@ public class CreatorService implements CreatorManager {
 
     @Override
     public boolean checkLogin(String username, String password) {
+
+
         Optional<Creator> existingCreator = creatorRepository.findByUsername(username);
-        if (existingCreator.isPresent()) {
-            Creator creator = existingCreator.get();
-            if (creator.getPassword().equals(password)) {
+        if (existingCreator.isEmpty()) {
+            System.out.println("who are you mr " +username+" ?");
+            return false;}
+
+        Creator creator = existingCreator.get();
+
+
+        if (passwordEncoder.matches(password, creator.getPassword())) {
                 // Password matches, login successful
-                return true;
+            return true;
             } else {
                 System.out.println("Password not matchy matchy");
                 return false;
             }
-        } else {
-            System.out.println("who are you mr " +username+" ?");
-            return false;
         }
-    }
+
+
 
     @Override
     public CreatorDTO findByUsername(String username) {

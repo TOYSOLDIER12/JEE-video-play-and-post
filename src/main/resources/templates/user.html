@@ -9,7 +9,7 @@
     <h1>User Profile</h1>
     <form th:action="@{/user/{username}(username = ${creator.getUsername()})}" method="post">
         <div class="profile-picture">
-            <img th:src="|${creator.getProfile()}|" alt="your face mf">
+            <img th:src="${creator.getProfile()}" alt="your face mf">
             <input type="file" name="profile" id="profile-picture-input">
             <label for="profile-picture-input">Change Picture</label>
         </div>
@@ -23,7 +23,7 @@
         </div>
         <div class="button-group">
             <button type="submit" class="save-button" >Save</button>
-            <button type="button" class="delete-button" th:onclick="|deleteUser('${creator.getUsername()}');|">Delete</button>
+            <button type="button" class="delete-button" th:onclick="deleteUser('${creator.getUsername()}')")>Delete</button>
         </div>
     </form>
 </div>
