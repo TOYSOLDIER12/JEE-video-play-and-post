@@ -56,4 +56,7 @@ public class Creator {
         this.videos.add(video);
     }
     public void addComment(Comment comment) {this.comments.add(comment);}
+    public void addRequester(Creator requester) {
+        this.requesters.add(requester);
+    }
 }

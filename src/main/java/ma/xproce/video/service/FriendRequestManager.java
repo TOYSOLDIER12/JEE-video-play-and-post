@@ -15,4 +15,5 @@ public interface FriendRequestManager {
     public boolean cancelRequest(long sendId, long freundId);
     public boolean cancelRequest(FriendRequest friendRequest);
     public List<FriendRequest> getCreatorRequest(CreatorDTO creatorDTO);
+    public List<FriendRequest> getFriendRequestsByReceiver(CreatorDTO receiver);
 }

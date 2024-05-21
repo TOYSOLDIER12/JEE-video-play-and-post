@@ -15,12 +15,12 @@
     <h1 th:text="${username}">Friend Requests</h1>
     <div class="friend-request" th:each="request : ${List}">
         <div class="profile">
-            <img alt="Profile Picture" th:src="${request.getProfile()}" />
-            <span th:text="${request.getUsername()}">Username</span>
+            <img alt="Profile Picture" th:src="${request.getSender().getProfile()}" />
+            <span th:text="${request.getReceiver().getUsername()}">Username</span>
         </div>
         <div class="actions">
-            <button class="accept" onclick="handleAccept(this)" th:data-request-id="${request.id}">Accept</button>
-            <button class="reject" onclick="handleReject(this)" th:data-request-id="${request.id}">Reject</button>
+            <button class="accept" onclick="handleAccept(this)" th:data-friend="${request.getSender().getUsername()}" th:data-username="${request.getReceiver().getUsername()}">Accept</button>
+            <button class="reject" onclick="handleReject(this)" th:data-friend="${request.getSender().getUsername()}" th:data-username="${request.getReceiver().getUsername()}">Reject</button>
         </div>
     </div>
 </div>

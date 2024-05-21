@@ -40,7 +40,51 @@ public class FriendRequestController {
             return ResponseEntity.ok("request cancelled");
         }
         friendRequestManager.sendRequest(senderDTO, receiverDTO);
+
         return ResponseEntity.ok("request sent");
+    }
+
+
+
+    @PostMapping("/api/user/friendAccept")
+    public ResponseEntity<String> friendAccept(@RequestBody Map<String, Object> payload){
+        String senderUsername = payload.get("username").toString();
+        String receiverUsername = payload.get("friend").toString();
+
+        CreatorDTO senderDTO = creatorManager.findByUsername(senderUsername);
+        CreatorDTO receiverDTO  = creatorManager.findByUsername(receiverUsername);
+
+        Creator sender = creatorMapper.CreatorDTOToCreator(senderDTO);
+        Creator receiver = creatorMapper.CreatorDTOToCreator(receiverDTO);
+
+        FriendRequest friendRequest = friendRequestManager.getByReceiverSender(sender, receiver);
+
+        if (friendRequest != null){
+            friendRequestManager.acceptFriendRequest(friendRequest);
+            return ResponseEntity.ok("request accepted");
+        }
+
+        return ResponseEntity.ok("request not found");
+    }
+
+    @PostMapping("/api/user/friendReject")
+    public ResponseEntity<String> friendReject(@RequestBody Map<String, Object> payload){
+        String senderUsername = payload.get("username").toString();
+        String receiverUsername = payload.get("friend").toString();
+
+        CreatorDTO senderDTO = creatorManager.findByUsername(senderUsername);
+        CreatorDTO receiverDTO  = creatorManager.findByUsername(receiverUsername);
+
+        Creator sender = creatorMapper.CreatorDTOToCreator(senderDTO);
+        Creator receiver = creatorMapper.CreatorDTOToCreator(receiverDTO);
+
+        FriendRequest friendRequest = friendRequestManager.getByReceiverSender(sender, receiver);
+        if (friendRequest != null){
+            friendRequestManager.rejectFriendRequest(friendRequest);
+            return ResponseEntity.ok("request accepted");
+        }
+
+        return ResponseEntity.ok("request not found");
     }
 
 }

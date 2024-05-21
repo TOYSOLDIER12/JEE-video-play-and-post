@@ -3,9 +3,11 @@ package ma.xproce.video.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import ma.xproce.video.dao.entity.FriendRequest;
 import ma.xproce.video.dao.entity.Role;
 
 import ma.xproce.video.service.CreatorManager;
+import ma.xproce.video.service.FriendRequestManager;
 import ma.xproce.video.service.RoleService;
 import ma.xproce.video.service.dtos.CreatorDTO;
 import ma.xproce.video.service.dtos.CreatorDTOADD;
@@ -42,6 +44,8 @@ public class CreatorController {
     private CreatorMapper creatorMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    FriendRequestManager friendRequestManager;
 
 
     @GetMapping("/login")
@@ -183,7 +187,10 @@ public class CreatorController {
     public String listRequests(Model model, @PathVariable(name = "username")String username){
         CreatorDTO creatorDTO = creatorManager.findByUsername(username);
 
-        List<CreatorDTO> requests = creatorDTO.getRequesters();
+        List<FriendRequest> requests = friendRequestManager.getFriendRequestsByReceiver(creatorDTO);
+
+
+
         model.addAttribute("username", creatorDTO.getUsername());
         model.addAttribute("List", requests);
 

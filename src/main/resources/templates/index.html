@@ -45,7 +45,7 @@
                 </p>
                 <span th:text="${video.getCreatorDTO().getUsername()}"></span>
                 <div th:if="${video.getCreatorDTO().getUsername() != username}" class="add-friend-button" th:data-username="${video.getCreatorDTO().getUsername()}">
-                    <i th:if="${video.getCreatorDTO().getUsername() != username}" class="fas fa-user-plus add-friend" th:data-username="${video.getCreatorDTO().getUsername()}" onclick="handleFriendRequest(this)"></i>
+                    <i th:if="${video.getCreatorDTO().getUsername() != username}" th:data-username="${username}" a class="fas fa-user-plus add-friend" th:data-friend="${video.getCreatorDTO().getUsername()}" onclick="handleFriendRequest(this)"></i>
                 </div>
             </div>
             <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2>

@@ -24,6 +24,7 @@ public class FriendRequestService implements FriendRequestManager{
 
     @Override
     public void acceptFriendRequest(FriendRequest friendRequest) {
+
         friendRequest.setStatus(Stat.ACCEPTED);
         friendRequest.getReceiver().addFriend(friendRequest.getSender());
         friendRequest.getSender().addFriend(friendRequest.getReceiver());
@@ -47,7 +48,12 @@ public class FriendRequestService implements FriendRequestManager{
             friendRequest.setSender(creatorMapper.CreatorDTOToCreator(sender));
             friendRequest.setReceiver(creatorMapper.CreatorDTOToCreator(freund));
             friendRequest.setStatus(Stat.PENDING);
+
             creatorMapper.CreatorDTOToCreator(freund).addFriendRequest(friendRequest);
+
+            creatorMapper.CreatorDTOToCreator(freund).addRequester(creatorMapper.CreatorDTOToCreator(sender));
+            creatorManager.updateCreator(creatorMapper.CreatorToCreatorDTOADD(creatorMapper.CreatorDTOToCreator(sender)));
+
             friendRequestRepository.save(friendRequest);
         }
     }
@@ -82,6 +88,12 @@ public class FriendRequestService implements FriendRequestManager{
     public List<FriendRequest> getCreatorRequest(CreatorDTO creatorDTO){
 
         return friendRequestRepository.findFriendRequestByReceiver(creatorMapper.CreatorDTOToCreator(creatorDTO));
+
+    }
+
+    @Override
+    public List<FriendRequest> getFriendRequestsByReceiver(CreatorDTO receiver){
+        return friendRequestRepository.findFriendRequestByReceiver(creatorMapper.CreatorDTOToCreator(receiver));
 
     }
 

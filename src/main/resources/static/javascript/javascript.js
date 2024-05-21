@@ -75,15 +75,63 @@ function handleFriendRequest(button)  {
 
 
 function handleAccept(button) {
-    var requestId = button.getAttribute('data-request-id');
-    console.log('Accepted request from: ' + requestId);
-    // Add your AJAX call or form submission logic here
+    var friend = $(button).data('friend');
+    var username = $(button).data('username');
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/user/friendAccept',
+        data: JSON.stringify({ friend: friend, username : username   }),
+        contentType: 'application/json',
+        success: function(response) {
+            // Update the video reactions count on the UI
+            if (response === "request accepted") {
+                $(button).text('Accepted');
+                $(button).siblings('.reject').remove();
+            }
+
+            else if (response === "request not found") {
+
+                console.error("Friend request not found");
+
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error handling friendRequest: " + error);
+        }
+    });
+
 }
 
 function handleReject(button) {
-    var requestId = button.getAttribute('data-request-id');
-    console.log('Rejected request from: ' + requestId);
-    // Add your AJAX call or form submission logic here
+    var friend = $(button).data('friend');
+    var username = $(button).data('username');
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/user/friendReject',
+        data: JSON.stringify({ friend: friend, username : username   }),
+        contentType: 'application/json',
+        success: function(response) {
+            // Update the video reactions count on the UI
+            if (response === "request rejected") {
+
+                $(button).text('Rejected');
+                $(button).siblings('.accept').remove();
+
+            }
+
+            else if (response === "request not found") {
+
+                console.error("Friend request not found");
+
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error handling friendRequest: " + error);
+        }
+    });
+
 }
 
 
