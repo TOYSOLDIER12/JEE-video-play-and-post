@@ -14,7 +14,7 @@
         <div class="profile">
             <p>
                 <a th:href="@{/my-videos/{username}(username=${video.getCreatorDTO().getUsername()})}">
-                    <img th:src="${video.getCreatorDTO().getProfile()}" alt="Profile Picture" >
+                    <img th:src="${video.getCreatorDTO().getProfile()}"  alt="Profile Picture" >
                 </a>
             </p>
             <span th:text="${video.getCreatorDTO().getUsername()}"></span>

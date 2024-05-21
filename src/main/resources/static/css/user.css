@@ -1,92 +1,114 @@
-body {
-    font-family: Arial, sans-serif;
+/* Reset CSS */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    box-sizing: border-box;
 }
 
-.profile-page {
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 20px;
+    height: 100vh;
 }
 
-.profile-pic {
+.container {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.profile-picture {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#profile-pic {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fff;
-    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+    border: 2px solid #ddd;
 }
 
-.profile-info {
-    text-align: center;
-    margin-top: 20px;
+.file-input {
+    display: none;
 }
 
-.profile-info h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.profile-info p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.profile-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
-    width: 300px;
-}
-
-.profile-form label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-
-.profile-form input[type="text"],
-.profile-form input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-.profile-form button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: #fff;
+.file-label {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.file-label:hover {
+    background-color: #0056b3;
+}
+
+.form-field {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     font-size: 16px;
 }
 
-.profile-form button:hover {
-    background-color: #3e8e41;
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.save-button, .delete-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+}
+
+.save-button {
+    background-color: #28a745;
+}
+
+.save-button:hover {
+    background-color: #218838;
 }
 
 .delete-button {
-    padding: 10px 20px;
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
+    background-color: #dc3545;
 }
 
 .delete-button:hover {
-    background-color: #da190b;
+    background-color: #c82333;
 }

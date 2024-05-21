@@ -102,7 +102,9 @@
 <body>
 <div class="container">
     <div class="profile-header">
-        <img th:src="${creator.getProfile()}" alt="Profile Picture">
+        <a th:href="@{/user/{username}(username=${creator.getUsername()})}">
+            <img th:src="${creator.getProfile()}" alt="Profile Picture">
+        </a>
         <div>
             <h2>
                 <span th:text="${creator.getUsername()}"></span>
