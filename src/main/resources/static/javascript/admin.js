@@ -1,36 +1,31 @@
-function deleteVideo(button) {
-    const videoId = button.getAttribute('data-video-id');
-    if (confirm('Are you sure you want to delete this video?')) {
+function deleteUser(element) {
+    const username = element.getAttribute('data-username');
+    if (confirm('Are you sure you want to delete this user?')) {
         $.ajax({
-            url: `/admin/delete-video/${videoId}`,
-            type: 'DELETE',
-            success: function(result) {
-                // Handle success
-                alert('Video deleted successfully');
+            url: '/api/admin/delete-user/' + username,
+            type: 'POST',
+            success: function(response) {
+                alert(response);
                 location.reload();
             },
-            error: function(error) {
-                // Handle error
-                alert('Error deleting video');
+            error: function(xhr, status, error) {
+                alert('Failed to delete user: ' + error);
             }
         });
     }
 }
 
-function deleteUser(button) {
-    const username = button.getAttribute('data-username');
-    if (confirm('Are you sure you want to delete this user?')) {
+function deleteVideo(element) {
+    const videoId = element.getAttribute('data-video-id');
+    if (confirm('Are you sure you want to delete this video?')) {
         $.ajax({
-            url: `/admin/delete-user/${username}`,
-            type: 'DELETE',
+            url: '/api/admin/delete-video/' + videoId,
+            type: 'POST',
             success: function(result) {
-                // Handle success
-                alert('User deleted successfully');
                 location.reload();
             },
-            error: function(error) {
-                // Handle error
-                alert('Error deleting user');
+            error: function(xhr, status, error) {
+                alert('Failed to delete video: ' + error);
             }
         });
     }

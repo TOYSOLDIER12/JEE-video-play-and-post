@@ -78,18 +78,21 @@ body {
 
 /* Video container */
 .videos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between the videos */
 }
 
 .video {
+    flex: 1 1 300px; /* Adjust the minimum width as needed */
+    box-sizing: border-box;
     position: relative;
 }
 
 .video h2 {
-    margin-top: 60px;
-    margin-left: 70px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .video video {
@@ -126,14 +129,16 @@ body {
     position: absolute;
     top: 10px;
     right: 10px;
-}
-
-.add-friend-button i {
-    font-size: 20px;
     cursor: pointer;
 }
 
-/* Like and comment buttons */
+.delete-user-button {
+    position: absolute;
+    top: 10px;
+    right: 40px;
+    cursor: pointer;
+}
+
 .like-comment-buttons {
     display: flex;
     justify-content: space-between;
@@ -141,18 +146,63 @@ body {
     margin-top: 10px;
 }
 
-.like-comment-buttons i {
+.reactions {
+    display: flex;
+    align-items: center;
+}
+
+.reactions div {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.reactions i {
     font-size: 20px;
+    margin-right: 5px;
     cursor: pointer;
     color: #6c757d;
     transition: color 0.2s;
 }
 
-.like-comment-buttons i:hover {
+.reactions i:hover {
     color: #007bff;
 }
 
+.comments {
+    display: flex;
+    align-items: center;
+}
+
 .comments i {
+    margin-right: 5px;
+}
+
+.reactions span,
+.comments span {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.delete-video-button {
+    cursor: pointer;
+    color: red;
+}
+
+.login-logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-logout-button i {
+    font-size: 20px;
     margin-right: 5px;
 }
 
@@ -197,40 +247,4 @@ body {
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
-}
-
-/* Delete video button */
-.delete-video-button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    padding: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.delete-video-button:hover {
-    background-color: #c82333;
-}
-
-/* Delete user button */
-.delete-user-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: transparent;
-    color: #dc3545;
-    border: none;
-    border-radius: 50%;
-    padding: 5px;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.delete-user-button:hover {
-    color: #c82333;
 }

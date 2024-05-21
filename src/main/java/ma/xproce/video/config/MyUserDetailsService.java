@@ -1,6 +1,5 @@
 package ma.xproce.video.config;
 
-import ma.xproce.video.dao.entity.MyUserPrincipal;
 import ma.xproce.video.service.CreatorManager;
 import ma.xproce.video.service.dtos.CreatorDTO;
 import org.springframework.beans.factory.annotation.Autowired;

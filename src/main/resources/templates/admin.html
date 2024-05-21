@@ -4,18 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/javascript/javascript.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="/javascript/admin.js"></script>
+    <script>src="/javascript/javascript.js"</script>
+    <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
 <div class="topnav">
     <a class="active" th:href="@{/index}">Home</a>
     <a class="active" th:href="@{/my-videos/{username}(username=${username})}">My Videos</a>
     <a class="active" th:href="@{/post}">Post</a>
-    <a class="active" th:href="@{/requests/{username}(username = ${username})}"><i class="fas fa-user-friends"></i></a>
+    <a class="active" th:href="@{/requests/{username}(username=${username})}"><i class="fas fa-user-friends"></i></a>
 </div>
 
 <div class="container">
@@ -25,7 +26,7 @@
             <button class="btn btn-primary" type="submit">Search</button>
         </form>
     </div>
-    <h1>Your Index, my Lord <span th:text="${username}"></span></h1>
+    <h1>Admin Panel, my Lord <span th:text="${username}"></span></h1>
     <div class="login-logout-button" sec:authorize="isAnonymous()">
         <i class="fas fa-sign-in-alt"></i>
         <a th:href="@{/login}">Login</a>
@@ -47,24 +48,25 @@
                 <div th:if="${video.getCreatorDTO().getUsername() != username}" class="add-friend-button" th:data-username="${video.getCreatorDTO().getUsername()}">
                     <i th:if="${video.getCreatorDTO().getUsername() != username}" class="fas fa-user-plus add-friend" th:data-username="${video.getCreatorDTO().getUsername()}" onclick="handleFriendRequest(this)"></i>
                 </div>
+                <div th:if="${video.getCreatorDTO().getUsername() != username}" class="delete-user-button">
+                    <i class="fas fa-trash" th:data-username="${video.getCreatorDTO().getUsername()}" onclick="deleteUser(this)"></i>
+                </div>
             </div>
             <h2 th:text="${video.getName()}" style="margin-top:60px; margin-left:300px;">Video Title</h2>
             <video controls loop autoplay muted>
                 <source th:src="${video.getUrl}" type="video/mp4">
-                gha bdel pc hhhh
+                Your browser does not support the video tag.
             </video>
             <div class="like-comment-buttons">
-                <div class="like-comment-buttons">
-                    <div class="reactions">
-                        <div th:each="type : ${T(ma.xproce.video.dao.enumerations.Type).values()}">
-                            <i th:class="'fas ' + ${iconClasses.get(type)}"
-                               th:data-reaction-count="${videoReactions[video.id][type.name()]}"
-                               th:data-type="${type.name()}"
-                               th:data-video="${video.id}"
-                               th:data-username="${username}"
-                               onclick="handleReactionClick(this)"></i>
-                            <span  th:text="${videoReactions[video.id][type.name()]}"></span>
-                        </div>
+                <div class="reactions">
+                    <div th:each="type : ${T(ma.xproce.video.dao.enumerations.Type).values()}">
+                        <i th:class="'fas ' + ${iconClasses.get(type)}"
+                           th:data-reaction-count="${videoReactions[video.id][type.name()]}"
+                           th:data-type="${type.name()}"
+                           th:data-video="${video.id}"
+                           th:data-username="${username}"
+                           onclick="handleReactionClick(this)"></i>
+                        <span th:text="${videoReactions[video.id][type.name()]}"></span>
                     </div>
                 </div>
                 <div class="comments">
@@ -72,6 +74,9 @@
                         <i class="fas fa-comment"></i>
                     </a>
                     <span th:text="${video.getComments()?.size()}"></span>
+                </div>
+                <div class="delete-video-button">
+                    <i class="fas fa-trash" th:data-video-id="${video.getId()}" onclick="deleteVideo(this)"></i>
                 </div>
             </div>
         </div>
@@ -85,5 +90,8 @@
         </ul>
     </div>
 </div>
+
+
+
 </body>
 </html>

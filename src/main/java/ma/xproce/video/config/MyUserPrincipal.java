@@ -1,4 +1,4 @@
-package ma.xproce.video.dao.entity;
+package ma.xproce.video.config;
 
 import lombok.Getter;
 import lombok.Setter;

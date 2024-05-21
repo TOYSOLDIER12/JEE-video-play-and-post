@@ -1,12 +1,10 @@
 package ma.xproce.video.config;
 
-import ma.xproce.video.dao.entity.MyUserPrincipal;
 import ma.xproce.video.service.dtos.CreatorDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +20,7 @@ public class ProjectSecurityConfig {
                         .requestMatchers("/editProfile","/post","/deleteVideo","/logout","/my-videos",  "/index","/updateVideo", "/admin").authenticated()
                         .requestMatchers("/**","/webjars/**","/sign", "/login", "/static/**", "/css/**","/javascript/**").permitAll())
                 .formLogin((form) -> form
-                        .loginPage("/login")
+                        //.loginPage("/login")
                         .successHandler(authenticationSuccessHandler())
                         .permitAll()
                 )
