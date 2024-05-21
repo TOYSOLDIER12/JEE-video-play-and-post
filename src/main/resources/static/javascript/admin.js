@@ -2,10 +2,11 @@ function deleteUser(element) {
     const username = element.getAttribute('data-username');
     if (confirm('Are you sure you want to delete this user?')) {
         $.ajax({
-            url: '/api/admin/delete-user/' + username,
+            url: '/api/admin/delete-user/',
             type: 'POST',
-            success: function(response) {
-                alert(response);
+            contentType: 'application/json',
+            data: JSON.stringify({ username: username }),
+            success: function(result) {
                 location.reload();
             },
             error: function(xhr, status, error) {
@@ -19,8 +20,10 @@ function deleteVideo(element) {
     const videoId = element.getAttribute('data-video-id');
     if (confirm('Are you sure you want to delete this video?')) {
         $.ajax({
-            url: '/api/admin/delete-video/' + videoId,
+            url: '/api/admin/delete-video/',
             type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ videoId: videoId }),
             success: function(result) {
                 location.reload();
             },
@@ -29,4 +32,6 @@ function deleteVideo(element) {
             }
         });
     }
+
+
 }

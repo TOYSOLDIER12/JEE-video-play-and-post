@@ -1,11 +1,10 @@
 package ma.xproce.video.web;
 
-import jakarta.servlet.http.HttpServletRequest;
+
 import ma.xproce.video.service.CreatorManager;
 import ma.xproce.video.service.VideoManager;
 import ma.xproce.video.service.dtos.CreatorDTO;
 import ma.xproce.video.service.dtos.CreatorDTOADD;
-import ma.xproce.video.service.dtos.VideoDTO;
 import ma.xproce.video.service.mapper.CreatorMapper;
 import ma.xproce.video.service.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.util.Map;
+
 
 @RestController
 public class DeleteUserController {
@@ -28,13 +28,16 @@ public class DeleteUserController {
     @Autowired
     VideoMapper videoMapper;
 
-    @PostMapping("/api/admin/delete-user/{username}")
-    public ResponseEntity<String> delete(@PathVariable(name = "username")String username){
+    @PostMapping("/api/admin/delete-user/")
+    public ResponseEntity<String> delete(@RequestBody Map<String, Object> payload){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 
         CreatorDTO creatorViewer = creatorManager.findByUsername(authentication.getName());
+
+        String username = payload.get("username").toString();
+
         CreatorDTO creatorDTO = creatorManager.findByUsername(username);
         System.out.println(creatorViewer.getUsername());
         if (creatorViewer == null || creatorDTO == null) {
@@ -54,8 +57,8 @@ public class DeleteUserController {
     }
 
 
-    @PostMapping("/api/admin/delete-video/{videoId}")
-    public ResponseEntity<String> deleteVideo(@PathVariable(name = "videoId")long videoId){
+    @PostMapping("/api/admin/delete-video/")
+    public ResponseEntity<String> deleteVideo(@RequestBody Map<String, Object> payload){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -75,6 +78,7 @@ public class DeleteUserController {
         if (!isAdmin) {
             return ResponseEntity.ok("gadarmi nta?");
         }
+        Long videoId = Long.valueOf(payload.get("videoId").toString());
 
          videoManager.deleteVideo(videoId);
 

@@ -57,7 +57,9 @@ public class FriendRequestController {
         Creator sender = creatorMapper.CreatorDTOToCreator(senderDTO);
         Creator receiver = creatorMapper.CreatorDTOToCreator(receiverDTO);
 
-        FriendRequest friendRequest = friendRequestManager.getByReceiverSender(sender, receiver);
+        FriendRequest friendRequest = friendRequestManager.getByReceiverSender(receiver, sender);
+
+        System.out.println( friendRequest.getSender().getUsername());
 
         if (friendRequest != null){
             friendRequestManager.acceptFriendRequest(friendRequest);
